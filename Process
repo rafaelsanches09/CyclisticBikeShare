@@ -1,0 +1,148 @@
+# Data Analysis Phase: Process #
+# Goal: Analyse our dataset in order to understand available data and do some cleaning as needed #
+
+USE cyclistic_bike_share;
+
+# Total number of rides during the year of 2023 before cleaning process #
+SELECT COUNT(ride_id) AS total_rides
+FROM tripdata_2023;
+
+# Results: 5.711.618 observations
+
+# RETRIEVING DUPLICATES - CONSIDERING RIDE_ID #
+SELECT 
+  ride_id,
+  COUNT(*) AS total
+FROM tripdata_2023
+GROUP BY ride_id
+HAVING COUNT(*) > 1;
+
+#Checking for null values#
+#Columns below#
+
+SHOW COLUMNS FROM tripdata_2023;
+/*
+ride_id
+rideable_type
+started_at
+ended_at
+start_station_name
+start_station_id
+end_station_name
+end_station_id
+member_casual
+start_lat
+start_lng
+end_lat
+end_lng
+*/
+
+SELECT
+    SUM(CASE WHEN ride_id IS NULL OR ride_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_ride_id,
+    SUM(CASE WHEN rideable_type IS NULL OR rideable_type = '' THEN 1 ELSE 0 END) AS NULL_or_empty_rideable_type,
+    SUM(CASE WHEN started_at IS NULL THEN 1 ELSE 0 END) AS NULL_or_empty_started_at,
+    SUM(CASE WHEN ended_at IS NULL THEN 1 ELSE 0 END) AS NULL_or_empty_endeded_at,
+    SUM(CASE WHEN start_station_name IS NULL OR start_station_name = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_station_name,
+    SUM(CASE WHEN start_station_id IS NULL OR start_station_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_station_id,
+    SUM(CASE WHEN end_station_name IS NULL OR end_station_name = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_station_name,
+    SUM(CASE WHEN end_station_id IS NULL OR end_station_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_station_id, 
+    SUM(CASE WHEN member_casual IS NULL OR member_casual = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_member_casual, 
+    SUM(CASE WHEN start_lat IS NULL OR start_lat = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_lat,
+    SUM(CASE WHEN start_lng IS NULL OR start_lng = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_lng,
+    SUM(CASE WHEN end_lat IS NULL OR end_lat = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_lat,
+    SUM(CASE WHEN end_lng IS NULL OR end_lng = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_lng
+FROM tripdata_2023;
+
+
+# Creating a new table to work with, maintaning tripdata_2023 with original data #
+
+CREATE TABLE tripdata_2023_v1
+( ride_id VARCHAR(255),
+ rideable_type VARCHAR (255),
+ started_at datetime,
+ ended_at datetime,
+ start_station_name VARCHAR(255),
+ start_station_id VARCHAR(255), 
+ end_station_name VARCHAR(255),
+ end_station_id VARCHAR(255), 
+ start_lat VARCHAR(255),	
+ start_lng VARCHAR(255),
+ end_lat VARCHAR(255),
+ end_lng VARCHAR(255),
+ member_casual VARCHAR(255)
+ ) AS 
+ SELECT * FROM tripdata_2023;
+ 
+ SELECT
+    SUM(CASE WHEN ride_id IS NULL OR ride_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_ride_id,
+    SUM(CASE WHEN rideable_type IS NULL OR rideable_type = '' THEN 1 ELSE 0 END) AS NULL_or_empty_rideable_type,
+    SUM(CASE WHEN started_at IS NULL THEN 1 ELSE 0 END) AS NULL_or_empty_started_at,
+    SUM(CASE WHEN ended_at IS NULL THEN 1 ELSE 0 END) AS NULL_or_empty_endeded_at,
+    SUM(CASE WHEN start_lat IS NULL OR TRIM(start_lat) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_lat,
+    SUM(CASE WHEN start_lng IS NULL OR TRIM(start_lng) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_lng,
+    SUM(CASE WHEN end_lat IS NULL OR TRIM(end_lat) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_lat,
+    SUM(CASE WHEN end_lng IS NULL OR TRIM(end_lng) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_lng,
+    SUM(CASE WHEN member_casual IS NULL OR member_casual = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_member_casual 
+FROM tripdata_2023_v1;
+ 
+ 
+
+ 
+# DELETING NULL VALUES FROM THE COLUMNS RELATED TO LATITUDE AND LONGITUDE #
+
+SET SQL_SAFE_UPDATES = 1;
+
+DELETE
+FROM tripdata_2023_v1
+WHERE (end_lat IS NULL OR TRIM(end_lat) = '');
+
+DELETE
+FROM tripdata_2023_v1
+WHERE (end_lng IS NULL OR TRIM(end_lng) = '');
+
+ SELECT * FROM tripdata_2023_v1;
+ 
+ # CHECKING WHETHER THERE IS A REGISTER WITH ENDED_AT AFTER STARTED_AT #
+ # RESULT: 1.279 ROWS #
+ SELECT  *
+ FROM tripdata_2023_v1
+ WHERE ended_at <= started_at;
+
+SET SQL_SAFE_UPDATES = 0;
+ 
+DELETE
+FROM tripdata_2023_v1
+WHERE ended_at <= started_at;
+
+ALTER TABLE tripdata_2023_v1
+DROP COLUMN length;
+
+ALTER TABLE tripdata_2023_v1
+DROP COLUMN length ;
+
+ALTER TABLE tripdata_2023_v1
+ADD COLUMN duration INT;
+
+UPDATE tripdata_2023_v1
+SET duration = TIMESTAMPDIFF(SECOND, started_at, ended_at);
+
+ALTER TABLE tripdata_2023_v1
+ADD COLUMN month INT;
+
+UPDATE tripdata_2023_v1
+SET month = MONTH(started_at);
+
+ SELECT * FROM tripdata_2023_v1;
+ 
+ALTER TABLE tripdata_2023_v1
+ADD COLUMN day_of_week INT;
+
+UPDATE tripdata_2023_v1
+SET day_of_week = DAYOFWEEK(started_at);
+
+ SELECT * FROM tripdata_2023_v1;
+ 
+ SELECT DISTINCT rideable_type
+ FROM tripdata_2023_v1;
+ 
+ SHOW columns
