@@ -1,0 +1,41 @@
+# File's purpose: This file was designed to set up our database and it was divided by steps #
+
+# Creating a database to host our data from CSV files #
+CREATE DATABASE IF NOT EXISTS cyclistic_bike_share;
+
+# Informing database to use #
+USE cyclistic_bike_share;
+
+# Creating table to import trip data of 2023 #
+# Variable structure 
+
+CREATE TABLE tripdata_2023
+( ride_id VARCHAR(255),
+ rideable_type VARCHAR (255),
+ started_at datetime,
+ ended_at datetime,
+ start_station_name VARCHAR(255),
+ start_station_id VARCHAR(255), 
+ end_station_name VARCHAR(255),
+ end_station_id VARCHAR(255), 
+ start_lat VARCHAR(255),	
+ start_lng VARCHAR(255),
+ end_lat VARCHAR(255),
+ end_lng VARCHAR(255),
+ member_casual VARCHAR(255)
+ );
+
+# Importing data into table # 
+ 
+LOAD DATA INFILE '202301-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202302-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202303-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202304-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202305-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202306-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202307-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202308-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202309-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202310-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202311-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
+LOAD DATA INFILE '202312-divvy-tripdata.TXT' INTO TABLE tripdata_2023 FIELDS TERMINATED BY '\t' IGNORE 1 LINES;
