@@ -1,0 +1,58 @@
+# Data Analysis Phase: Analyze #
+# Goal: Analyze data to find trends #
+
+# Total rides in 2023
+SELECT COUNT(ride_id) FROM tripdata_2023_v1;
+
+# Total rides in 2023 Vs. Type of Rider (annual or casual)
+SELECT COUNT(ride_id), member_casual 
+FROM tripdata_2023_v1
+GROUP BY member_casual;
+
+-- Total rides by Month and Type of Rider 
+SELECT COUNT(ride_id), member_casual, 
+	     CASE WHEN month=1 THEN 'Jan'			
+            WHEN month=2 THEN 'Feb'
+            WHEN month=3 THEN 'Mar'
+            WHEN month=4 THEN 'Apr'
+            WHEN month=5 THEN 'May'
+            WHEN month=6 THEN 'Jun'
+            WHEN month=7 THEN 'Jul'
+            WHEN month=8 THEN 'Aug'
+            WHEN month=9 THEN 'Sep'
+            WHEN month=10 THEN 'Oct'
+            WHEN month=11 THEN 'Nov'
+            Else 'Dec' END AS month_name, month
+FROM tripdata_2023_v1
+GROUP BY member_casual, month
+ORDER BY month;
+
+-- Total rides by day_of_week and Type of Rider
+
+SELECT COUNT(ride_id) AS 'Trips taken', member_casual AS 'Type of Membership', 
+CASE WHEN day_of_week=1 THEN 'Sunday'
+	 WHEN day_of_week=2 THEN 'Monday'
+     WHEN day_of_week=3 THEN 'Tuesday'
+     WHEN day_of_week=4 THEN 'Wednesday'
+     WHEN day_of_week=5 THEN 'Thursday'
+     WHEN day_of_week=6 THEN 'Friday'
+     WHEN day_of_week=7 THEN 'Saturday'
+     ELSE 'Error' END AS 'Day of Week'
+FROM tripdata_2023_v1
+GROUP BY member_casual, day_of_week
+ORDER BY day_of_week, member_casual;
+
+-- Total rides by Rideable Type & Type of Rider
+SELECT COUNT(ride_id), rideable_type, member_casual 
+FROM tripdata_2023_v1
+GROUP BY 2,3;
+
+-- Bicycle preferences by Type of Member in 2023
+SELECT COUNT(*), member_casual, rideable_type
+FROM tripdata_2023_v1
+GROUP BY member_casual, rideable_type;
+
+-- Average ride duration by Type of Member in 2023
+SELECT member_casual, ROUND(AVG(duration),0)
+FROM tripdata_2023_v1
+GROUP BY member_casual;
