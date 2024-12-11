@@ -1,5 +1,5 @@
 # Data Analysis Phase: Process #
-# Goal: Analyse our dataset in order to understand available data and do some cleaning as needed #
+# Goal: Understand available data and do some cleaning as needed #
 
 USE cyclistic_bike_share;
 
@@ -9,7 +9,7 @@ FROM tripdata_2023;
 
 # Results: 5.711.618 observations
 
-# RETRIEVING DUPLICATES - CONSIDERING RIDE_ID #
+# Checking for duplicates (RIDE_ID) #
 SELECT 
   ride_id,
   COUNT(*) AS total
@@ -17,25 +17,9 @@ FROM tripdata_2023
 GROUP BY ride_id
 HAVING COUNT(*) > 1;
 
-#Checking for null values#
-#Columns below#
+# Results: 0 duplicates
 
-SHOW COLUMNS FROM tripdata_2023;
-/*
-ride_id
-rideable_type
-started_at
-ended_at
-start_station_name
-start_station_id
-end_station_name
-end_station_id
-member_casual
-start_lat
-start_lng
-end_lat
-end_lng
-*/
+#Checking for null values#
 
 SELECT
     SUM(CASE WHEN ride_id IS NULL OR ride_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_ride_id,
@@ -53,8 +37,7 @@ SELECT
     SUM(CASE WHEN end_lng IS NULL OR end_lng = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_lng
 FROM tripdata_2023;
 
-
-# Creating a new table to work with, maintaning tripdata_2023 with original data #
+# Creating a new table to work with. Tripdata_2023 will be kept as backup #
 
 CREATE TABLE tripdata_2023_v1
 ( ride_id VARCHAR(255),
@@ -72,25 +55,40 @@ CREATE TABLE tripdata_2023_v1
  member_casual VARCHAR(255)
  ) AS 
  SELECT * FROM tripdata_2023;
- 
+
+
+# Checking again for null values, this time on the new table #
+
  SELECT
     SUM(CASE WHEN ride_id IS NULL OR ride_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_ride_id,
     SUM(CASE WHEN rideable_type IS NULL OR rideable_type = '' THEN 1 ELSE 0 END) AS NULL_or_empty_rideable_type,
     SUM(CASE WHEN started_at IS NULL THEN 1 ELSE 0 END) AS NULL_or_empty_started_at,
     SUM(CASE WHEN ended_at IS NULL THEN 1 ELSE 0 END) AS NULL_or_empty_endeded_at,
+    SUM(CASE WHEN start_station_name IS NULL OR start_station_name = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_station_name,
+    SUM(CASE WHEN start_station_id IS NULL OR start_station_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_station_id,
+    SUM(CASE WHEN end_station_name IS NULL OR end_station_name = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_station_name,
+    SUM(CASE WHEN end_station_id IS NULL OR end_station_id = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_station_id, 
     SUM(CASE WHEN start_lat IS NULL OR TRIM(start_lat) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_lat,
     SUM(CASE WHEN start_lng IS NULL OR TRIM(start_lng) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_start_lng,
     SUM(CASE WHEN end_lat IS NULL OR TRIM(end_lat) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_lat,
     SUM(CASE WHEN end_lng IS NULL OR TRIM(end_lng) = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_lng,
     SUM(CASE WHEN member_casual IS NULL OR member_casual = '' THEN 1 ELSE 0 END) AS NULL_or_empty_end_member_casual 
-FROM tripdata_2023_v1;
- 
- 
+FROM tripdata_2023_v1; 
 
- 
-# DELETING NULL VALUES FROM THE COLUMNS RELATED TO LATITUDE AND LONGITUDE #
+# After analyzing the query results for null values, it was observed that approximately 900k null values were present in the columns start_station_name, start_station_id, end_station_name, and end_station_id. 
+# In a real-life situation, I would investigate the root cause of these null values and attempt to resolve the issue. 
+# However, for this case study, I decided to drop these columns and work with the remaining variables. 
+# I deemed this approach more beneficial than excluding all the affected rows, as doing so would result in a 20% reduction in data.
 
-SET SQL_SAFE_UPDATES = 1;
+# Additionally, approximately 7k null values were present in the columns end_lat and end_lng. These were also excluded from the analysis to ensure data consistency.
+
+ ALTER TABLE tripdata_2023_v1
+ DROP COLUMN start_station_name,
+ DROP COLUMN start_station_id,
+ DROP COLUMN end_station_name,
+ DROP COLUMN end_station_id;
+ 
+# Deleting null values from the columns related to end_lat and end_lng #
 
 DELETE
 FROM tripdata_2023_v1
@@ -108,17 +106,13 @@ WHERE (end_lng IS NULL OR TRIM(end_lng) = '');
  FROM tripdata_2023_v1
  WHERE ended_at <= started_at;
 
-SET SQL_SAFE_UPDATES = 0;
- 
+# Removing these registers. 
+
 DELETE
 FROM tripdata_2023_v1
 WHERE ended_at <= started_at;
 
-ALTER TABLE tripdata_2023_v1
-DROP COLUMN length;
-
-ALTER TABLE tripdata_2023_v1
-DROP COLUMN length ;
+# Adding additional columns duration, month and day of week
 
 ALTER TABLE tripdata_2023_v1
 ADD COLUMN duration INT;
@@ -131,8 +125,6 @@ ADD COLUMN month INT;
 
 UPDATE tripdata_2023_v1
 SET month = MONTH(started_at);
-
- SELECT * FROM tripdata_2023_v1;
  
 ALTER TABLE tripdata_2023_v1
 ADD COLUMN day_of_week INT;
@@ -140,9 +132,11 @@ ADD COLUMN day_of_week INT;
 UPDATE tripdata_2023_v1
 SET day_of_week = DAYOFWEEK(started_at);
 
- SELECT * FROM tripdata_2023_v1;
+# Checking data once again #
+SELECT *
+FROM tripdata_2023_v1;
+
+## Data is ready to be analyzed #
+
+
  
- SELECT DISTINCT rideable_type
- FROM tripdata_2023_v1;
- 
- SHOW columns
