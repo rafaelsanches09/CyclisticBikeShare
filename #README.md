@@ -1,4 +1,5 @@
-<h1> Cyclistic Bike Share Case Study </h1>
+<h1> Cyclistic Bike Share Case Study </h1> 
+
 <h2>Google Data Analytics Capstone Project</h2>
 
 ### 📖 Overview 
@@ -44,10 +45,56 @@ During this phase of the data analysis, the following steps were performed:
 Considering the size of data, MYSQL was the tool chosen for this phase. 
 Steps performed are described below:
 
-#### Setting up environment
-+ Create a database to host our data.
-+ Create table to import data from txt files.
+#### Environment SetUp
++ Create a database to host our data - database cyclistic_bike_share
++ Create table to import data from txt files - table Tripdata_2023.
 + Load data into the created table.
+
+#### Cleaning Process
++ Check for null values
++ Creating a new table to work with - Tripdata_2023_v1. First table will be kept as backup.
++ Checking again for null values, this time on the new table.
+
+Results as below:
+
+<table>
+    <tr>
+        <td> NULL_or_empty_ride_id</td>
+        <td> NULL_or_empty_rideable_type</td>
+        <td> NULL_or_empty_started_at</td>
+        <td> NULL_or_empty_endeded_at</td>
+        <td> NULL_or_empty_start_station_name</td>
+        <td> NULL_or_empty_start_station_id</td>
+        <td> NULL_or_empty_end_station_name</td>
+        <td> NULL_or_empty_end_station_id</td>
+        <td> NULL_or_empty_start_lat</td>
+        <td> NULL_or_empty_start_lng</td>
+        <td>NULL_or_empty_end_lat</td>
+        <td>NULL_or_empty_end_lng</td>
+        <td>NULL_or_empty_end_member_casual</td>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>875716</td>
+        <td>875848</td>
+        <td>929202</td>
+        <td>929343</td>
+        <td>0</td>
+        <td>0</td>
+        <td>6990</td>
+        <td>6990</td>
+        <td>0</td>
+    </tr> 
+</table>
+
+
++ After analyzing the query results for null values, it was observed that approximately 900k null values were present in the columns start_station_name, start_station_id, end_station_name, and end_station_id. In a real-life situation, I would investigate the root cause of these null values and attempt to resolve the issue. However, for this case study, I decided to drop these columns and work with the remaining variables. I deemed this approach more beneficial than excluding all the affected rows, as doing so would result in a 20% reduction in data.
++ Additionally, approximately 7k null values were present in the columns end_lat and end_lng. These were also excluded from the analysis to ensure data consistency.
+
+
   
 
 
