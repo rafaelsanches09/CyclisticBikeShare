@@ -94,21 +94,35 @@ Results as below:
 + After analyzing the query results for null values, it was observed that approximately 900k null values were present in the columns start_station_name, start_station_id, end_station_name, and end_station_id. In a real-life situation, I would investigate the root cause of these null values and attempt to resolve the issue. However, for this case study, I decided to drop these columns and work with the remaining variables. I deemed this approach more beneficial than excluding all the affected rows, as doing so would result in a 20% reduction in data.
 + Additionally, approximately 7k null values were present in the columns end_lat and end_lng. These were also excluded from the analysis to ensure data consistency.
 
-### ✅ Analyze & Data Visualization
+### ✅ Results
 
-### Total rides in 2023: 5.711.618
+### Total rides in 2023: 
+There were 5.711.618 rides between January and December of 2023.
   
 ### Total rides in 2023 by type of rider
++ 64% of the rides was taken by annual members.
++ Whereas, 36% by casual members.
 
 ![image](https://github.com/user-attachments/assets/6f27a2b2-596a-45cd-b202-ea70062a28e9)
 
 ### Total rides in 2023 by type of rider & month
-  
++ For both type of riders, summer months (from june to august) are the ones with most number of rides
++ July was the month with more casual rides, whereas August the month with more annual members rides
 ![image](https://github.com/user-attachments/assets/0d0972c1-5742-40da-a75a-2daeaacbf480)
 
 ### Total rides in 2023 by type of rider & day of week
++ Casual members - Friday, saturday and Sunday are the days with most number of rides
++ Annual members ride more at week days
 ![image](https://github.com/user-attachments/assets/7dc8035a-f479-46cc-9015-b4a45e7e6f4d)
 
+### Type of Bicycle Preferences - Member
+
+![image](https://github.com/user-attachments/assets/84322dc4-3825-4099-86d0-423e31923d53)
+
+
+### Type of Bicycle Preferences - Casual
+
+![image](https://github.com/user-attachments/assets/4552ea50-cddd-4849-93c6-639d8944b1e0)
 
 
 
